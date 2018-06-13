@@ -17,10 +17,11 @@ function Line(x, y,  endX, endY, fill){
 Line.prototype.draw = function(){
   ctx.save();
   ctx.strokeStyle = this.fill;
-
+  ctx.beginPath();
   ctx.moveTo(this.x,this.y);
   ctx.lineTo(this.endX, this.endY);
   ctx.stroke();
+  ctx.restore();
   ctx.closePath();
 }
 
@@ -106,41 +107,75 @@ drawScreen();
 function dragpoint(e){
   mouseX=parseInt(e.clientX);
       mouseY=parseInt(e.clientY);
+  
       if(point1.inCursorInside(mouseX,mouseY))
       {
-        clearCanvas();
-        point1.x = mouseX;
-        point1.y = mouseY;
-        line1.x = mouseX;
-        line2.x = mouseX;
-        line1.y = mouseY;
-        line2.y = mouseY;
+  $("canvas").mousemove(function(e){
+          clearCanvas();
+        point1.x = e.clientX;
+        point1.y = e.clientY;
+        line1.x = e.clientX;
+        line2.x = e.clientX;
+        line1.y = e.clientY;
+        line2.y = e.clientY;
         drawScreen();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    e.preventDefault();
+        });
       }
       else if(point2.inCursorInside(mouseX,mouseY)){
-        point2.x = mouseX;
-        point2.y = mouseY;
-        line1.endX = mouseX;
-        line1.endY = mouseY;
+         $("canvas").mousemove(function(e){
+        point2.x = e.clientX;
+        point2.y = e.clientY;
+        line1.endX = e.clientX;
+        line1.endY = e.clientY;
         drawScreen();
+           e.stopPropagation();
+    e.stopImmediatePropagation();
+           e.preventDefault();
+      });
       }
   else if(point3.inCursorInside(mouseX,mouseY)){
-        point3.x = mouseX;
-        point3.y = mouseY;
-        line2.endX = mouseX;
-        line2.endY = mouseY;
+    $("canvas").mousemove(function(e){
+        point3.x = e.clientX;
+        point3.y = e.clientY;
+        line2.endX = e.clientX;
+        line2.endY = e.clientY;
         drawScreen();
+      e.stopPropagation();
+    e.stopImmediatePropagation();
+      e.preventDefault();
+    });
       }
 }
 
-$("canvas").mousedown(function(e){
-  $("canvas").mousemove(function(e){
-    dragpoint(e);
-  });
+// $("canvas").mousedown(function(e){
+//   $("canvas").mousemove(function(e){
     
-}).mouseup(function(e){
-  $("canvas").off("mousemove");
+//     dragpoint(e);
+//     e.stopPropagation();
+//     e.stopImmediatePropagation();
+//     e.preventDefault();
+//   });
+      
+// }).mouseup(function(e){
+//   console.log('mouse is up');
+//   e.stopPropagation();
+//     e.stopImmediatePropagation();
+//   e.preventDefault();
+//   $("canvas").off("mousemove");
+  
+// });
+
+$("canvas").mousedown(dragpoint).mouseup(function(e){
+      $("canvas").off("mousemove");    
+  e.stopPropagation();
+    e.stopImmediatePropagation();
+    e.preventDefault();
 });
+
+
 
 $("#points").change(function(e){
   subPoints = e.target.value;
